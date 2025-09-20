@@ -25,7 +25,7 @@ export default function HomePage() {
         {/* Responsive image */}
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg">
           <Image
-            src="/images/hero.jpg"
+            src="/images/light_full.png"
             alt="Pre & postnatal fitness and baby massage"
             fill
             sizes="(min-width: 768px) 50vw, 100vw"
