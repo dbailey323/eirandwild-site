@@ -1,5 +1,7 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Eir & Wild — Pre- & Postnatal Fitness, Baby Massage, PT",
@@ -13,13 +15,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen bg-white text-slate-900 antialiased">
         <header className="border-b">
           <nav className="mx-auto flex max-w-6xl items-center justify-between p-4">
-            <a href="/" className="text-xl font-semibold">Eir & Wild</a>
+            <Link href="/" className="text-xl font-semibold">Eir & Wild</Link>
             <ul className="flex items-center gap-6 text-sm">
-              <li><a href="/classes" className="hover:underline">Classes</a></li>
-              <li><a href="/personal-training" className="hover:underline">Personal Training</a></li>
-              <li><a href="/timetable" className="hover:underline">Timetable & Booking</a></li>
-              <li><a href="/about" className="hover:underline">About</a></li>
-              <li><a href="/contact" className="inline-flex items-center rounded-md border px-3 py-1.5 hover:bg-slate-50">Contact</a></li>
+              <li><Link href="/classes" className="hover:underline">Classes</Link></li>
+              <li><Link href="/personal-training" className="hover:underline">Personal Training</Link></li>
+              <li><Link href="/timetable" className="hover:underline">Timetable & Booking</Link></li>
+              <li><Link href="/about" className="hover:underline">About</Link></li>
+              <li>
+                <Link href="/contact" className="inline-flex items-center rounded-md border px-3 py-1.5 hover:bg-slate-50">
+                  Contact
+                </Link>
+              </li>
             </ul>
           </nav>
         </header>
