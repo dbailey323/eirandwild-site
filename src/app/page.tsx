@@ -1,18 +1,41 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function HomePage() {
   return (
     <div className="grid gap-12">
-      {/* ... */}
-      <div className="mt-6 flex gap-3">
-        <Link href="/timetable" className="rounded-md bg-slate-900 px-5 py-2.5 text-white">
-          Book a class
-        </Link>
-        <Link href="/classes" className="rounded-md border px-5 py-2.5">
-          Explore classes
-        </Link>
-      </div>
-      {/* ... */}
+      <section className="grid items-center gap-6 py-16 md:grid-cols-2">
+        <div>
+          <h1 className="text-4xl font-bold leading-tight md:text-5xl">
+            Strong mums, calm babies — <span className="whitespace-nowrap">Eir & Wild</span>
+          </h1>
+          <p className="mt-4 text-lg text-slate-700">
+            Safe, empowering classes for new & expecting mothers, plus baby massage and personal training.
+          </p>
+          <div className="mt-6 flex gap-3">
+            <Link href="/timetable" className="rounded-md bg-brand px-5 py-2.5 text-white">
+              Book a class
+            </Link>
+            <Link href="/classes" className="rounded-md border px-5 py-2.5 hover:bg-slate-50">
+              Explore classes
+            </Link>
+          </div>
+        </div>
+
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg">
+          <Image
+            src="/images/light_full.png"
+            alt="Pre & postnatal fitness and baby massage in your area"
+            fill
+            sizes="(min-width: 768px) 50vw, 100vw"
+            className="object-cover"
+            priority
+          />
+        </div>
+      </section>
+
+      {/* feature cards stay the same */}
     </div>
   );
 }
+
