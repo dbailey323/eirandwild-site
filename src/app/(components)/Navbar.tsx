@@ -6,7 +6,10 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 const NAV_LINKS = [
-  { href: "/classes", label: "Classes" },
+  { href: "/", label: "Home" },
+  { href: "/about", label: "About Me" },
+  { href: "/classes", label: "Womanhood Classes" },
+  { href: "/classes", label: "MotherhoodClasses" },
   { href: "/personal-training", label: "Personal Training" },
   { href: "/timetable", label: "Timetable & Booking" },
   { href: "/about", label: "About" },
