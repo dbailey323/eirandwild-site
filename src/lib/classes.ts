@@ -7,7 +7,7 @@ export const EW_CLASSES = [
     page: "eirandwild-motherhood",
     calendarId: "b9fv0nhstsda",
     titles: "Mummy,Mummy Movement,Strong Mummy",
-    image: "/images/strong_mummy",
+    image: "/images/strong_mummy.png",
     imageAlt: "Strong Mummy Movement class"
   },
   {
@@ -17,7 +17,7 @@ export const EW_CLASSES = [
     page: "eirandwild-motherhood",
     calendarId: "b9fv0nhstsda",
     titles: "Badass,Bumps,Badass Bumps",
-    image: "/images/strong_mummy",
+    image: "/images/badass_bumps.png",
     imageAlt: "Strong Mummy Movement class"
   },
 
@@ -29,7 +29,7 @@ export const EW_CLASSES = [
     page: "eirandwild-womanhood",
     calendarId: "s4a36cwgjzl8",
     titles: "Dance",
-    image: "/images/strong_mummy",
+    image: "/images/dance_tone.png",
     imageAlt: "Strong Mummy Movement class"
   },
   {
@@ -39,7 +39,7 @@ export const EW_CLASSES = [
     page: "eirandwild-womanhood",
     calendarId: "s4a36cwgjzl8",
     titles: "Monday",
-    image: "/images/strong_mummy",
+    image: "/images/monday_double.png",
     imageAlt: "Strong Mummy Movement class"
   },
   {
@@ -49,7 +49,7 @@ export const EW_CLASSES = [
     page: "eirandwild-womanhood",
     calendarId: "s4a36cwgjzl8",
     titles: "Strong",
-    image: "/images/strong_mummy",
+    image: "/images/strong_stretched.png",
     imageAlt: "Strong Mummy Movement class"
   },
  
