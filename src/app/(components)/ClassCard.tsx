@@ -40,15 +40,16 @@ export default function ClassCard({
     <article className="group relative flex flex-col overflow-hidden rounded-2xl border bg-white/70 shadow-sm ring-1 ring-black/5 transition hover:shadow-md">
       {/* Tall image header */}
       {image && (
-        <div className="relative h-72 w-full">
-          <Image
-            src={image}
-            alt={imageAlt ?? title}
-            fill
-            sizes="(min-width:1280px) 25vw, (min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
-            className="object-cover"
-            priority={false}
-          />
+        <div className="relative w-full h-80 bg-slate-100">
+  <Image
+    src={image}
+    alt={imageAlt ?? title}
+    fill
+    sizes="(min-width:1280px) 25vw, (min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
+    className="object-contain"  // Show full image, no cropping
+    priority={false}
+  />
+</div>
           {tag && (
             <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-0.5 text-xs font-medium text-[--brand-ink]">
               {tag}
