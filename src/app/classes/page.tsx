@@ -1,25 +1,26 @@
 // src/app/classes/page.tsx
-import ClassCard from "@/app/(components)/ClassCard";
+import ClassCard from "@/components/ClassCard";
 import { EW_CLASSES } from "@/lib/classes";
 
-async function resolveNextUrl(c: (typeof EW_CLASSES)[number]) {
+async function getUpcoming(c: (typeof EW_CLASSES)[number]) {
   const qs = new URLSearchParams({
     page: c.page,
     calendarId: c.calendarId,
     titles: c.titles,
+    limit: "8", // how many buttons per class
   });
   const base = process.env.NEXT_PUBLIC_BASE_URL ?? "";
   try {
-    const r = await fetch(`${base}/api/bookwhen/next?${qs.toString()}`, { cache: "no-store" });
+    const r = await fetch(`${base}/api/bookwhen/upcoming?${qs.toString()}`, { cache: "no-store" });
     const j = await r.json();
-    return typeof j?.url === "string" ? j.url : null;
+    return Array.isArray(j?.events) ? j.events : [];
   } catch {
-    return null;
+    return [];
   }
 }
 
 export default async function ClassesPage() {
-  const urls = await Promise.all(EW_CLASSES.map(resolveNextUrl));
+  const all = await Promise.all(EW_CLASSES.map(getUpcoming));
 
   return (
     <div className="mx-auto max-w-6xl py-10">
@@ -27,7 +28,7 @@ export default async function ClassesPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Classes</h1>
           <p className="mt-1 text-slate-600">
-            Pre &amp; postnatal classes plus womanhood sessions. Book via Bookwhen.
+            Book ahead by choosing a date below. Checkout is handled on Bookwhen.
           </p>
         </div>
         <a
@@ -44,13 +45,12 @@ export default async function ClassesPage() {
             key={c.id}
             title={c.label}
             blurb={c.description}
-            href={urls[i]}
             pageSlug={c.page}
             tag={c.page.includes("motherhood") ? "Motherhood" : "Womanhood"}
+            events={all[i]}
           />
         ))}
       </div>
     </div>
   );
 }
-
