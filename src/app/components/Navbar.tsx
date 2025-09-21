@@ -45,10 +45,10 @@ export default function Navbar() {
             <Image
               src="/images/logo.png"
               alt="Eir & Wild Wellness"
-              width={160}
-              height={40}
+              width={200}
+              height={60}
               priority
-              className="h-8 w-auto"
+              className="h-12 w-auto md:h-14"
             />
           </Link>
 
