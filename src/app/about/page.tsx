@@ -34,7 +34,7 @@ export default function AboutPage() {
       {/* Portrait */}
       <div className="overflow-hidden rounded-xl border shadow-md">
         <Image
-          src="/images/about/aboutme.jpg" // <— put your portrait in /public/images/about/aboutme.jpg
+          src="/images/aboutme.jpg" // <— put your portrait in /public/images/about/aboutme.jpg
           alt="Lara Bailey, Fitness and Wellness Coach"
           width={1200}
           height={1500}
