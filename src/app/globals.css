@@ -3,7 +3,18 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Always available */
+/* Import Google Font Montserrat */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* Import custom Moon Time font (make sure font file is inside /public/fonts) */
+@font-face {
+  font-family: 'Moon Time';
+  src: url('/fonts/moon-time-regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Brand color variables */
 :root {
   --brand: #0a0f5c;       /* deep navy */
   --brand-ink: #071039;   /* ink */
@@ -12,22 +23,33 @@
   --foreground: #171717;
 }
 
-/* Optional dark overrides (if you want any) */
+/* Optional dark mode overrides */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0b0b10;
     --foreground: #f5f6f7;
-    /* keep brand/accent unless you want different values in dark */
   }
 }
 
-/* Utility so you can write className="text-accent" */
+/* Default typography */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Montserrat', sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Headings use Moon Time */
+h1, h2, h3 {
+  font-family: 'Moon Time', cursive;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Utility: text-accent */
 @layer utilities {
   .text-accent { color: var(--accent); }
 }
 
-/* Base */
-body {
-  background: var(--background);
-  color: var(--foreground);
-}
