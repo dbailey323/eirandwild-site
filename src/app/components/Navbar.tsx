@@ -8,8 +8,9 @@ import { useEffect, useRef, useState } from "react";
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About Me" },
-  { href: "/classes", label: "Womanhood Classes" },
-  { href: "/classes", label: "MotherhoodClasses" },
+  { href: "/classes", label: "Class Info" },
+  { href: "/timetable?tab=womanhood", label: "Womanhood Classes" },
+  { href: "/timetable?tab=motherhood", label: "MotherhoodClasses" },
   { href: "/personal-training", label: "Personal Training" },
   { href: "/timetable", label: "Timetable & Booking" },
   { href: "/about", label: "About" },
