@@ -7,10 +7,10 @@
   --background: #ffffff;
   --foreground: #171717;
 
-  /* make these global (not only in light mode) */
-  --brand: #2a7a6d;      /* main brand green */
-  --brand-ink: #0f3b35;  /* dark text for brand tints */
-  --accent: #f4a261;
+  /* brand palette */
+  --brand: #0a0a63;       /* your navy blue */
+  --brand-ink: #ffffff;   /* white text for contrast */
+  --accent: #f4a261;      /* optional secondary colour */
 }
 
 /* optional: tweak for dark mode */
