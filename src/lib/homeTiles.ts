@@ -8,7 +8,7 @@ export type HomeTile = {
 };
 
 export const HOME_TILES: HomeTile[] = [
-  { title: "Header", href: "/about", img: "/images/Header.png", alt: "Eir & Wild banner", banner: true },
+  { title: "Header", href: "/", img: "/images/Header.png", alt: "Eir & Wild banner", banner: true },
   { title: "About Me", href: "/about", img: "/images/About Me.png", alt: "About Lara" },
   { title: "Our Story", href: "/ourstory", img: "/images/Our Story.png", alt: "Our Story" },
 
