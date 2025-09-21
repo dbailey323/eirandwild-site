@@ -39,7 +39,7 @@ export default function Navbar() {
     <>
       {/* ---- HEADER (no overlay/drawer children!) ---- */}
       <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-        <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+        <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:py-4">
           {/* Logo */}
           <Link href="/" className="inline-flex items-center gap-2" aria-label="Eir & Wild home">
             <Image
