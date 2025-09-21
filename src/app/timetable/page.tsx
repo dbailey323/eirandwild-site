@@ -1,105 +1,180 @@
-"use client";
+// src/app/timetable/page.tsx
+import Link from "next/link";
+import { EW_CLASSES } from "@/lib/classes";
 
-import { useEffect, useMemo, useState } from "react";
-import clsx from "clsx";
+type ClassCfg = (typeof EW_CLASSES)[number];
 
-type TabKey = "womanhood" | "motherhood";
+type ApiEvent = {
+  id: string;
+  title: string;
+  start_at: string; // ISO
+  url: string;      // https://bookwhen.com/<page>#focus=ev-...
+};
 
-export default function TimetablePage() {
-  // Read default tab from URL (?tab=motherhood), fallback to womanhood
-  const initialTab = useMemo<TabKey>(() => {
-    if (typeof window === "undefined") return "womanhood";
-    const t = new URLSearchParams(window.location.search).get("tab");
-    return (t === "motherhood" || t === "womanhood") ? t : "womanhood";
-  }, []);
+type SearchParams = { [key: string]: string | string[] | undefined };
 
-  const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
+function isMotherhood(c: ClassCfg) {
+  return c.page.includes("motherhood");
+}
+function isWomanhood(c: ClassCfg) {
+  return c.page.includes("womanhood");
+}
 
-  const iframes: Record<TabKey, string> = {
-    womanhood: "https://bookwhen.com/eirandwild-womanhood/iframe",
-    motherhood: "https://bookwhen.com/eirandwild-motherhood/iframe",
-  };
+function weekKey(d: Date) {
+  // Group by Monday-of-week (local time)
+  const dt = new Date(d);
+  const day = dt.getDay(); // 0 Sun .. 6 Sat
+  const diff = (day === 0 ? -6 : 1) - day; // days to Monday
+  dt.setDate(dt.getDate() + diff);
+  dt.setHours(0, 0, 0, 0);
+  return dt.toISOString();
+}
 
-  // Load Bookwhen iframe resizer once
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://cdn.bookwhen.com/js/iframe_resizer.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => { document.body.removeChild(script); };
-  }, []);
+function fmtWeekLabel(isoMonday: string) {
+  const d = new Date(isoMonday);
+  const end = new Date(d);
+  end.setDate(d.getDate() + 6);
+  const fmt = new Intl.DateTimeFormat(undefined, {
+    day: "2-digit",
+    month: "short",
+  });
+  const yr = new Intl.DateTimeFormat(undefined, { year: "numeric" });
+  return `${fmt.format(d)} – ${fmt.format(end)} ${yr.format(d)}`;
+}
 
-  // Keep tab in the URL so you can share links
-  useEffect(() => {
-    const url = new URL(window.location.href);
-    url.searchParams.set("tab", activeTab);
-    window.history.replaceState({}, "", url.toString());
-  }, [activeTab]);
+function fmtDateTime(iso: string) {
+  const d = new Date(iso);
+  return new Intl.DateTimeFormat(undefined, {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(d);
+}
+
+async function fetchUpcoming(c: ClassCfg, limit = 24): Promise<ApiEvent[]> {
+  const params = new URLSearchParams({
+    page: c.page,
+    calendarId: c.calendarId,
+    titles: c.titles,
+    limit: String(limit),
+  });
+  const base = process.env.NEXT_PUBLIC_BASE_URL ?? "";
+  try {
+    const res = await fetch(`${base}/api/bookwhen/upcoming?${params.toString()}`, {
+      cache: "no-store",
+    });
+    const json = await res.json();
+    return Array.isArray(json?.events) ? (json.events as ApiEvent[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export default async function TimetablePage({
+  searchParams,
+}: {
+  searchParams?: SearchParams;
+}) {
+  const tab = typeof searchParams?.tab === "string" ? searchParams!.tab : "motherhood";
+  const isMother = tab !== "womanhood";
+
+  const classes = EW_CLASSES.filter(isMother ? isMotherhood : isWomanhood);
+
+  // Pull events for each class concurrently
+  const lists = await Promise.all(classes.map((c) => fetchUpcoming(c, 50)));
+
+  // Flatten and annotate with class label
+  const events = lists
+    .flatMap((list, i) =>
+      list.map((e) => ({
+        ...e,
+        classLabel: classes[i].label,
+      })),
+    )
+    // sort by date ascending
+    .sort(
+      (a, b) =>
+        new Date(a.start_at).getTime() - new Date(b.start_at).getTime(),
+    );
+
+  // Group by week
+  const byWeek = new Map<string, typeof events>();
+  for (const ev of events) {
+    const key = weekKey(new Date(ev.start_at));
+    const arr = byWeek.get(key) ?? [];
+    arr.push(ev);
+    byWeek.set(key, arr);
+  }
+
+  const weekKeys = Array.from(byWeek.keys()).sort(
+    (a, b) => new Date(a).getTime() - new Date(b).getTime(),
+  );
 
   return (
-    <div className="grid gap-6 py-8">
-      <h1 className="text-3xl font-bold">Timetable & Booking</h1>
-      <p className="text-slate-700">
-        Select the schedule below to view and book your classes directly.
-      </p>
+    <div className="mx-auto max-w-6xl py-8">
+      <header className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">Timetable &amp; Booking</h1>
+        <p className="mt-1 text-slate-600">
+          Choose a date to book. Checkout happens on Bookwhen.
+        </p>
 
-      {/* Tabs */}
-      <div
-        role="tablist"
-        aria-label="Choose a schedule"
-        className="flex flex-wrap gap-2 border-b pb-2"
-      >
-        {(
-          [
-            { key: "womanhood", label: "Womanhood" },
-            { key: "motherhood", label: "Motherhood" },
-          ] as const
-        ).map(({ key, label }) => {
-          const selected = activeTab === key;
+        {/* Tabs */}
+        <div className="mt-4 inline-flex rounded-lg border p-1 bg-white">
+          <Link
+            href="/timetable?tab=motherhood"
+            className="px-3 py-1.5 rounded-md text-sm font-medium data-[active=true]:bg-[--brand] data-[active=true]:text-white"
+            data-active={isMother ? "true" : "false"}
+          >
+            Motherhood
+          </Link>
+          <Link
+            href="/timetable?tab=womanhood"
+            className="px-3 py-1.5 rounded-md text-sm font-medium data-[active=true]:bg-[--brand] data-[active=true]:text-white"
+            data-active={!isMother ? "true" : "false"}
+          >
+            Womanhood
+          </Link>
+        </div>
+      </header>
+
+      {/* Empty state */}
+      {events.length === 0 && (
+        <div className="rounded-lg border p-6 text-slate-600">
+          No upcoming sessions found for this schedule. Please check back soon.
+        </div>
+      )}
+
+      {/* Weeks */}
+      <div className="space-y-8">
+        {weekKeys.map((wk) => {
+          const items = byWeek.get(wk) ?? [];
           return (
-            <button
-              key={key}
-              role="tab"
-              aria-selected={selected}
-              aria-controls={`panel-${key}`}
-              id={`tab-${key}`}
-              onClick={() => setActiveTab(key)}
-              className={clsx(
-                "rounded-md px-4 py-2 text-base md:text-sm",           // bigger touch targets on mobile
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-400",
-                selected
-                  ? "font-semibold border-b-2 border-brand -mb-[2px]"
-                  : "text-slate-600 hover:text-slate-900"
-              )}
-            >
-              {label}
-            </button>
+            <section key={wk} className="rounded-xl border p-4">
+              <h2 className="text-lg font-semibold mb-3">{fmtWeekLabel(wk)}</h2>
+              <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {items.map((ev) => (
+                  <li key={ev.id} className="flex items-center justify-between rounded-lg border p-3">
+                    <div>
+                      <div className="text-sm font-medium">{ev.classLabel}</div>
+                      <div className="text-sm text-slate-600">{fmtDateTime(ev.start_at)}</div>
+                    </div>
+                    <a
+                      href={ev.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center rounded-lg bg-emerald-600 bg-[--brand] px-3 py-1.5 text-white text-sm font-medium transition hover:opacity-90"
+                    >
+                      Book
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
           );
         })}
       </div>
-
-      {/* Active iframe */}
-      <div
-        id={`panel-${activeTab}`}
-        role="tabpanel"
-        aria-labelledby={`tab-${activeTab}`}
-        className="rounded-lg border"
-      >
-        <iframe
-          key={activeTab}                 // ensures reload when switching tabs
-          title={`Eir & Wild — ${activeTab}`}
-          src={iframes[activeTab]}
-          className="w-full border-0"     // responsive width; height handled by resizer
-          loading="lazy"
-        />
-      </div>
-
-      <p className="text-sm text-slate-600">
-        Problems booking? Email{" "}
-        <a href="mailto:hello@eirandwild.co.uk" className="underline">
-          hello@eirandwild.co.uk
-        </a>.
-      </p>
     </div>
   );
 }
