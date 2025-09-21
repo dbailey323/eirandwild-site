@@ -1,3 +1,4 @@
+// src/components/ClassCard.tsx
 import Link from "next/link";
 import Image from "next/image";
 
@@ -6,34 +7,45 @@ type ClassEvent = { id: string; start_at: string; url: string };
 type Props = {
   title: string;
   blurb: string;
-  pageSlug: string;
-  tag?: string;
-  events: ClassEvent[];
-  image?: string;     // NEW
-  imageAlt?: string;  // NEW
+  pageSlug: string;     // e.g. "eirandwild-motherhood"
+  tag?: string;         // "Motherhood" | "Womanhood"
+  events: ClassEvent[]; // from /api/bookwhen/upcoming
+  image?: string;
+  imageAlt?: string;
 };
 
 function formatWhen(iso: string) {
   const d = new Date(iso);
   return new Intl.DateTimeFormat(undefined, {
-    weekday: "short", day: "2-digit", month: "short",
-    hour: "2-digit", minute: "2-digit",
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(d);
 }
 
-export default function ClassCard({ title, blurb, pageSlug, tag, events, image, imageAlt }: Props) {
+export default function ClassCard({
+  title,
+  blurb,
+  pageSlug,
+  tag,
+  events,
+  image,
+  imageAlt,
+}: Props) {
   const hasEvents = events.length > 0;
 
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-2xl border bg-white/70 shadow-sm ring-1 ring-black/5 transition hover:shadow-md">
-      {/* Image */}
-      {image ? (
-        <div className="relative aspect-[16/9] w-full">
+      {/* Tall image header */}
+      {image && (
+        <div className="relative h-72 w-full">
           <Image
             src={image}
             alt={imageAlt ?? title}
             fill
-            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            sizes="(min-width:1280px) 25vw, (min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
             className="object-cover"
             priority={false}
           />
@@ -43,7 +55,7 @@ export default function ClassCard({ title, blurb, pageSlug, tag, events, image, 
             </span>
           )}
         </div>
-      ) : null}
+      )}
 
       {/* Body */}
       <div className="p-6">
@@ -56,6 +68,7 @@ export default function ClassCard({ title, blurb, pageSlug, tag, events, image, 
         <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
         <p className="mt-2 text-sm text-slate-600 leading-6">{blurb}</p>
 
+        {/* Upcoming dates */}
         <div className="mt-4 grid gap-2">
           {hasEvents ? (
             <>
@@ -79,6 +92,7 @@ export default function ClassCard({ title, blurb, pageSlug, tag, events, image, 
           )}
         </div>
 
+        {/* Actions */}
         <div className="mt-5 flex items-center gap-3">
           {hasEvents && (
             <a
