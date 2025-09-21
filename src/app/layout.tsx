@@ -1,7 +1,7 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "./(components)/Navbar";
+import TileCard from "@/app/(components)/TileCard";
 
 export const metadata: Metadata = {
   title: "Eir & Wild — Pre- & Postnatal Fitness, Baby Massage, PT",
