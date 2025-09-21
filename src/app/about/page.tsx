@@ -17,7 +17,7 @@ function BrandStrip({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-xl bg-[--brand] p-6 sm:p-8 text-white shadow-md">
+    <section className="rounded-xl [background:var(--brand,#0a0f5c)] p-6 sm:p-8 text-white shadow-md">
       <h2 className="text-2xl sm:text-3xl font-semibold text-[--accent] tracking-tight">
         {title}
       </h2>
