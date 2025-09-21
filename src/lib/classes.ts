@@ -7,6 +7,8 @@ export const EW_CLASSES = [
     page: "eirandwild-motherhood",
     calendarId: "b9fv0nhstsda",
     titles: "Mummy,Mummy Movement,Strong Mummy",
+    image: "/images/strong_mummy",
+    imageAlt: "Strong Mummy Movement class"
   },
   {
     id: "bumps",
