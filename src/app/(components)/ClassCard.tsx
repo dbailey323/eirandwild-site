@@ -5,8 +5,8 @@ import Image from "next/image";
 interface ClassCardProps {
   title: string;
   blurb: string;
-  pageSlug: string;
-  tag: string;
+  pageSlug: string;                      // e.g. "eirandwild-motherhood"
+  tag: string;                           // "Motherhood" | "Womanhood"
   events: { id: string; start_at: string }[];
   image: string;
   imageAlt: string;
@@ -21,6 +21,11 @@ export function ClassCard({
   image,
   imageAlt,
 }: ClassCardProps) {
+  const hasEvents = Array.isArray(events) && events.length > 0;
+  const nextUrl = hasEvents
+    ? `https://bookwhen.com/${pageSlug}#focus=${events[0].id}`
+    : `https://bookwhen.com/${pageSlug}`;
+
   return (
     <div className="overflow-hidden rounded-2xl border bg-white shadow-sm ring-1 ring-black/5">
       {/* Image — cropped to fill */}
@@ -42,8 +47,8 @@ export function ClassCard({
         <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
         <p className="mt-2 text-sm leading-6 text-slate-600">{blurb}</p>
 
-        {/* Upcoming dates */}
-        {events?.length > 0 ? (
+        {/* Upcoming dates (day + short month) */}
+        {hasEvents ? (
           <div className="mt-4">
             <div className="text-xs text-slate-500">Upcoming dates</div>
             <div className="mt-2 flex flex-wrap gap-2">
@@ -69,16 +74,19 @@ export function ClassCard({
 
         {/* Actions */}
         <div className="mt-5 flex items-center gap-3">
+          {hasEvents && (
+            <a
+              href={nextUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center rounded-lg bg-emerald-600 bg-[--brand] px-4 py-2 font-medium text-white transition hover:opacity-90"
+              aria-label="Book the next available session"
+            >
+              Book next available
+            </a>
+          )}
           <a
-            href={`https://bookwhen.com/${pageSlug}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center rounded-lg bg-[--brand] px-4 py-2 font-medium text-white transition hover:opacity-90"
-          >
-            Book next available
-          </a>
-          <a
-            href={`/${pageSlug}`}
+            href={`/${pageSlug}`} // adjust if you have a different internal route
             className="text-sm font-medium text-[--brand-ink] underline-offset-4 hover:underline"
           >
             Learn more
