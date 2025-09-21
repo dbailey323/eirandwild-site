@@ -17,6 +17,8 @@ export const EW_CLASSES = [
     page: "eirandwild-motherhood",
     calendarId: "b9fv0nhstsda",
     titles: "Badass,Bumps,Badass Bumps",
+    image: "/images/strong_mummy",
+    imageAlt: "Strong Mummy Movement class"
   },
 
   // Womanhood classes (calendarId = s4a36cwgjzl8)
@@ -27,6 +29,8 @@ export const EW_CLASSES = [
     page: "eirandwild-womanhood",
     calendarId: "s4a36cwgjzl8",
     titles: "Dance",
+    image: "/images/strong_mummy",
+    imageAlt: "Strong Mummy Movement class"
   },
   {
     id: "double",
@@ -35,6 +39,8 @@ export const EW_CLASSES = [
     page: "eirandwild-womanhood",
     calendarId: "s4a36cwgjzl8",
     titles: "Monday",
+    image: "/images/strong_mummy",
+    imageAlt: "Strong Mummy Movement class"
   },
   {
     id: "stretch",
@@ -43,6 +49,8 @@ export const EW_CLASSES = [
     page: "eirandwild-womanhood",
     calendarId: "s4a36cwgjzl8",
     titles: "Strong",
+    image: "/images/strong_mummy",
+    imageAlt: "Strong Mummy Movement class"
   },
  
 ] as const;
