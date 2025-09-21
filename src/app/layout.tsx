@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/app/components/Navbar";
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   title: "Eir & Wild — Pre- & Postnatal Fitness, Baby Massage, PT",
@@ -20,7 +21,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="mx-auto max-w-6xl p-4 text-sm text-slate-600">
             © {new Date().getFullYear()} Eir & Wild • Pre & Postnatal Fitness
           </div>
-        <Analytics />  
+        <Analytics />
+        <SpeedInsights />  
         </footer>
       </body>
     </html>
