@@ -17,10 +17,10 @@ function yyyymmddhhmmss(d = new Date()) {
   );
 }
 
-// Minimal types for what we use
+// Minimal types
 type BwEvent = {
-  id: string; // ev-...
-  type: "event" | "events" | string;
+  id: string;
+  type: string;
   attributes?: { start_at?: string };
 };
 type BwListResponse<T> = { data?: T[] };
@@ -35,14 +35,14 @@ async function fetchJson<T>(url: string): Promise<T> {
 }
 
 /**
- * GET /api/bookwhen/next?calendarId=<id>&page=<slug>&titles=<comma+or list>
+ * GET /api/bookwhen/next?calendarId=<id>&page=<slug>&titles=<A,B>
  * OR  /api/bookwhen/next?calendarId=<id>&page=<slug>&eventId=ev-...
  */
 export async function GET(req: NextRequest) {
   const u = new URL(req.url);
   const calendarId = u.searchParams.get("calendarId");
   const page = u.searchParams.get("page");
-  const titles = u.searchParams.get("titles"); // "A,B" works as OR
+  const titles = u.searchParams.get("titles");
   const eventId = u.searchParams.get("eventId");
   const fallback = page ? `https://bookwhen.com/${page}` : "https://bookwhen.com/";
 
@@ -51,39 +51,30 @@ export async function GET(req: NextRequest) {
   }
   if (!TOKEN) return NextResponse.json({ ok: true, url: fallback });
 
-  // Case A: direct event id → just build the URL (we could verify, but not required)
   if (eventId) {
     return NextResponse.json({ ok: true, url: `https://bookwhen.com/${page}#focus=${eventId}` });
   }
+  if (!titles) return NextResponse.json({ ok: true, url: fallback });
 
-  if (!titles) {
-    return NextResponse.json({ ok: true, url: fallback });
-  }
-
-  // Build query
   const qs = new URLSearchParams();
-  qs.set("filter[calendar]", calendarId);   // internal calendar id
-  qs.set("filter[title]", titles);          // comma-separated keywords (OR)
-  qs.set("filter[from]", yyyymmddhhmmss()); // from "now"
-  qs.set("page[limit]", "10");              // get a few, then sort
+  qs.set("filter[calendar]", calendarId);
+  qs.set("filter[title]", titles);        // comma-separated → OR
+  qs.set("filter[from]", yyyymmddhhmmss());
+  qs.set("page[limit]", "10");
 
   try {
-    const url = `https://api.bookwhen.com/v2/events?${qs.toString()}`;
-    const json = await fetchJson<BwListResponse<BwEvent>>(url);
-
+    const json = await fetchJson<BwListResponse<BwEvent>>(
+      `https://api.bookwhen.com/v2/events?${qs.toString()}`
+    );
     const events: BwEvent[] = Array.isArray(json.data) ? json.data : [];
-    if (events.length === 0) {
-      return NextResponse.json({ ok: true, url: fallback });
-    }
+    if (events.length === 0) return NextResponse.json({ ok: true, url: fallback });
 
-    // Pick earliest by start_at
-    const sorted = [...events].sort((a, b) => {
-      const as = a.attributes?.start_at ?? "";
-      const bs = b.attributes?.start_at ?? "";
-      return new Date(as).getTime() - new Date(bs).getTime();
-    });
+    const next = [...events].sort(
+      (a, b) =>
+        new Date(a.attributes?.start_at ?? 0).getTime() -
+        new Date(b.attributes?.start_at ?? 0).getTime()
+    )[0];
 
-    const next = sorted[0];
     const nextId = next?.id;
     if (!nextId) return NextResponse.json({ ok: true, url: fallback });
 

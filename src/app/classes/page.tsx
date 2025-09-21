@@ -1,3 +1,5 @@
+// src/app/classes/page.tsx
+import ClassCard from "@/app/(components)/ClassCard";
 import { EW_CLASSES } from "@/lib/classes";
 
 async function resolveNextUrl(c: (typeof EW_CLASSES)[number]) {
@@ -7,34 +9,48 @@ async function resolveNextUrl(c: (typeof EW_CLASSES)[number]) {
     titles: c.titles,
   });
   const base = process.env.NEXT_PUBLIC_BASE_URL ?? "";
-  const res = await fetch(`${base}/api/bookwhen/next?${qs.toString()}`, { cache: "no-store" });
-  const data = await res.json();
-  return data?.url ?? `https://bookwhen.com/${c.page}`;
+  try {
+    const r = await fetch(`${base}/api/bookwhen/next?${qs.toString()}`, { cache: "no-store" });
+    const j = await r.json();
+    return typeof j?.url === "string" ? j.url : null;
+  } catch {
+    return null;
+  }
 }
 
 export default async function ClassesPage() {
   const urls = await Promise.all(EW_CLASSES.map(resolveNextUrl));
 
   return (
-    <div className="grid gap-8 py-8">
-      <h1 className="text-3xl font-bold">Classes</h1>
-      <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+    <div className="mx-auto max-w-6xl py-10">
+      <header className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Classes</h1>
+          <p className="mt-1 text-slate-600">
+            Pre &amp; postnatal classes plus womanhood sessions. Book via Bookwhen.
+          </p>
+        </div>
+        <a
+          href="mailto:hello@eirandwild.co.uk"
+          className="inline-flex items-center rounded-xl border px-4 py-2 text-sm font-medium hover:bg-slate-50"
+        >
+          Ask a question
+        </a>
+      </header>
+
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {EW_CLASSES.map((c, i) => (
-          <div key={c.id} className="rounded-lg border p-6">
-            <h2 className="text-xl font-semibold">{c.label}</h2>
-            <p className="mt-2 text-slate-700">{c.description}</p>
-            <a
-              href={urls[i]}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 inline-block rounded-md bg-brand px-4 py-2 text-white"
-            >
-              Book now
-            </a>
-            <p className="mt-2 text-xs text-slate-500">Bookings handled on Bookwhen.</p>
-          </div>
+          <ClassCard
+            key={c.id}
+            title={c.label}
+            blurb={c.description}
+            href={urls[i]}
+            pageSlug={c.page}
+            tag={c.page.includes("motherhood") ? "Motherhood" : "Womanhood"}
+          />
         ))}
       </div>
     </div>
   );
 }
+
