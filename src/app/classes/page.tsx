@@ -1,3 +1,4 @@
+// src/app/classes/page.tsx
 import ClassCard from "@/app/(components)/ClassCard";
 import { EW_CLASSES } from "@/lib/classes";
 
@@ -26,11 +27,14 @@ export default async function ClassesPage() {
       <header className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Classes</h1>
-          <p className="mt-1 text-slate-600">Book ahead by choosing a date below. Checkout is on Bookwhen.</p>
+          <p className="mt-1 text-slate-600">
+            Book ahead by choosing a date below. Checkout is on Bookwhen.
+          </p>
         </div>
       </header>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Responsive grid: 1 → 2 → 3 → 4 columns */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {EW_CLASSES.map((c, i) => (
           <ClassCard
             key={c.id}
