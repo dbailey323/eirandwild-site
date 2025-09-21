@@ -1,58 +1,61 @@
 import Link from "next/link";
+// src/app/components/ClassCard.tsx
 import Image from "next/image";
 
 interface ClassCardProps {
-  tag: string;
   title: string;
-  description: string;
-  events: { id: string; start_at: string; url: string }[];
+  blurb: string; // ✅ keep as blurb
+  pageSlug: string;
+  tag: string;
+  events: { id: string; start_at: string }[];
   image: string;
-  imageAlt?: string;
+  imageAlt: string;
 }
 
-export default function ClassCard({
-  tag,
+export function ClassCard({
   title,
-  description,
+  blurb,
+  pageSlug,
+  tag,
   events,
   image,
   imageAlt,
 }: ClassCardProps) {
   return (
-    <div className="overflow-hidden rounded-2xl border bg-white shadow-sm">
+    <div className="overflow-hidden rounded-xl border shadow-sm">
       {/* Image */}
-      <div className="relative w-full h-80 bg-slate-100">
+      <div className="relative h-64 w-full">
         <Image
           src={image}
-          alt={imageAlt ?? title}
+          alt={imageAlt}
           fill
-          sizes="(min-width:1280px) 25vw, (min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
-          className="object-contain" // Option B: show full image, no cropping
+          className="object-cover object-center"
         />
+        <span className="absolute top-2 left-2 rounded-md bg-white/80 px-2 py-1 text-xs font-medium">
+          {tag}
+        </span>
       </div>
 
       {/* Content */}
       <div className="p-4">
-        <span className="mb-2 inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
-          {tag}
-        </span>
         <h3 className="text-lg font-semibold">{title}</h3>
-        <p className="mt-1 text-sm text-slate-600">{description}</p>
+        <p className="mt-1 text-sm text-slate-600">{blurb}</p>
 
-        {/* Dates */}
-        {events.length > 0 && (
+        {events?.length > 0 && (
           <div className="mt-4">
-            <h4 className="text-sm font-medium text-slate-700">Upcoming dates</h4>
-            <div className="mt-2 grid grid-cols-2 gap-2">
-              {events.slice(0, 4).map((ev) => (
+            <h4 className="text-sm font-medium text-slate-700">
+              Upcoming dates
+            </h4>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {events.map((ev) => (
                 <a
                   key={ev.id}
-                  href={ev.url}
+                  href={`https://bookwhen.com/${pageSlug}#focus=${ev.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-lg border px-3 py-2 text-sm hover:bg-slate-50"
+                  className="rounded-md border px-3 py-1 text-sm hover:bg-slate-50"
                 >
-                  {new Date(ev.start_at).toLocaleDateString("en-GB", {
+                  {new Date(ev.start_at).toLocaleString("en-GB", {
                     weekday: "short",
                     month: "short",
                     day: "numeric",
@@ -65,21 +68,19 @@ export default function ClassCard({
           </div>
         )}
 
-        {/* Actions */}
-        <div className="mt-4 flex items-center justify-between">
+        {/* Buttons */}
+        <div className="mt-4 flex items-center gap-4">
           <a
-            href={events[0]?.url ?? "#"}
+            href={`https://bookwhen.com/${pageSlug}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center rounded-lg bg-[--brand] px-4 py-2 font-medium text-white transition hover:opacity-90"
+            className="rounded-lg bg-[--brand] px-4 py-2 text-white font-medium shadow hover:opacity-90"
           >
             Book next available
           </a>
           <a
-            href={`https://bookwhen.com/`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-medium text-[--brand] hover:underline"
+            href={`/classes/${pageSlug}`}
+            className="text-sm text-[--brand] hover:underline"
           >
             Learn more
           </a>
