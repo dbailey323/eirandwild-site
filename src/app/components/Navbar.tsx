@@ -117,7 +117,7 @@ export default function Navbar() {
         aria-hidden={!open}
         tabIndex={-1}
         onClick={() => setOpen(false)}
-        className={`fixed inset-0 z-40 bg-black/40 transition-opacity md:hidden ${
+        className={`fixed inset-0 z-[9998] bg-black/70 backdrop-blur-sm transition-opacity md:hidden ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       />
@@ -126,7 +126,7 @@ export default function Navbar() {
       <div
         role="dialog"
         aria-modal="true"
-        className={`fixed right-0 top-0 z-50 h-full w-80 max-w-[85vw] bg-white shadow-xl transition-transform duration-300 md:hidden ${
+        className={`fixed right-0 top-0 z-[9999] h-full w-80 max-w-[85vw] bg-white shadow-xl transition-transform duration-300 overflow-y-auto md:hidden ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
