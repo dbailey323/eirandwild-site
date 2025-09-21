@@ -1,15 +1,34 @@
 // src/components/ClassCard.tsx
 import Link from "next/link";
 
+type ClassEvent = {
+  id: string;
+  start_at: string; // ISO with timezone
+  url: string;
+};
+
 type Props = {
   title: string;
   blurb: string;
-  href: string | null;      // null = no upcoming sessions
-  pageSlug: string;         // e.g. "eirandwild-motherhood"
-  tag?: string;             // "Motherhood" | "Womanhood"
+  pageSlug: string;
+  tag?: string;
+  events: ClassEvent[]; // upcoming dates
 };
 
-export default function ClassCard({ title, blurb, href, pageSlug, tag }: Props) {
+function formatWhen(iso: string) {
+  const d = new Date(iso);
+  return new Intl.DateTimeFormat(undefined, {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(d);
+}
+
+export default function ClassCard({ title, blurb, pageSlug, tag, events }: Props) {
+  const hasEvents = events.length > 0;
+
   return (
     <article className="group relative flex flex-col rounded-2xl border bg-white/70 p-6 shadow-sm ring-1 ring-black/5 backdrop-blur-sm transition hover:shadow-md">
       {tag && (
@@ -21,24 +40,39 @@ export default function ClassCard({ title, blurb, href, pageSlug, tag }: Props) 
       <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
       <p className="mt-2 text-sm text-slate-600 leading-6">{blurb}</p>
 
-      <div className="mt-5 flex items-center gap-2">
-        {href ? (
+      <div className="mt-4 grid gap-2">
+        {hasEvents ? (
+          <>
+            <div className="text-xs text-slate-500">Upcoming dates</div>
+            <div className="flex flex-wrap gap-2">
+              {events.map((ev) => (
+                <a
+                  key={ev.id}
+                  href={ev.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center rounded-lg border px-3 py-1.5 text-sm hover:bg-slate-50"
+                >
+                  {formatWhen(ev.start_at)}
+                </a>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="text-sm text-slate-500">No upcoming sessions</div>
+        )}
+      </div>
+
+      <div className="mt-5 flex items-center gap-3">
+        {hasEvents && (
           <a
-            href={href}
+            href={events[0].url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center rounded-lg bg-emerald-600 bg-[--brand] px-5 py-2.5 text-white font-semibold shadow-md hover:shadow-lg transition hover:opacity-90"
-
+            className="inline-flex items-center rounded-lg bg-emerald-600 bg-[--brand] px-4 py-2 text-white font-medium transition hover:opacity-90"
           >
-            Book now
-            <svg className="ml-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-              <path d="M12.293 2.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414L9.414 16H6v-3.414l8.293-8.293a1 1 0 000-1.414z"/>
-            </svg>
+            Book next available
           </a>
-        ) : (
-          <span className="inline-flex items-center rounded-lg border px-4 py-2 text-slate-500">
-            No upcoming sessions
-          </span>
         )}
         <Link
           href={`/${pageSlug}`}
