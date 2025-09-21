@@ -1,5 +1,5 @@
 // src/app/classes/page.tsx
-import ClassCard from "@/app/(components)/ClassCard";
+import { ClassCard } from "@/app/(components)/ClassCard";
 import { EW_CLASSES } from "@/lib/classes";
 
 async function getUpcoming(c: (typeof EW_CLASSES)[number]) {
