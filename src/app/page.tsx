@@ -1,5 +1,6 @@
 import TileCard from "@/app/(components)/TileCard";
 import { HOME_TILES } from "@/lib/homeTiles";
+import { Analytics } from "@vercel/analytics/next"
 
 export default function HomePage() {
   return (
