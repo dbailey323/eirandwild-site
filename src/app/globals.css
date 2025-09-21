@@ -6,21 +6,30 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* make these global (not only in light mode) */
+  --brand: #2a7a6d;      /* main brand green */
+  --brand-ink: #0f3b35;  /* dark text for brand tints */
+  --accent: #f4a261;
 }
 
+/* optional: tweak for dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0b0b0b;
+    --foreground: #f5f5f5;
+    /* keep brand as-is or choose a darker tone if you prefer */
+    /* --brand: #1f5c53; */
+    /* --brand-ink: #d7f0eb; */
+  }
+}
+
+/* (keep this) */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --brand: #2a7a6d;      /* main brand green */
-    --brand-ink: #0f3b35;  /* dark text for brand tints */
-    --accent: #f4a261;
-  }
 }
 
 body {
