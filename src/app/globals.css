@@ -1,31 +1,33 @@
-/* src/app/globals.css */
-
 @import "tailwindcss";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Base palette */
+/* Always available */
 :root {
+  --brand: #0a0f5c;       /* deep navy */
+  --brand-ink: #071039;   /* ink */
+  --accent: #e3c23d;      /* gold */
   --background: #ffffff;
   --foreground: #171717;
-
-  /* BRAND — always defined */
-  --brand: #0a0f5c;        /* your deep navy */
-  --brand-ink: #071039;    /* dark ink for links on light brand tints */
-  --accent: #e3c23d;       /* gold */
 }
 
-/* Optional: only adjust background/foreground in dark mode */
+/* Optional dark overrides (if you want any) */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0b0b0b;
-    --foreground: #f5f5f5;
+    --background: #0b0b10;
+    --foreground: #f5f6f7;
+    /* keep brand/accent unless you want different values in dark */
   }
 }
 
+/* Utility so you can write className="text-accent" */
+@layer utilities {
+  .text-accent { color: var(--accent); }
+}
+
+/* Base */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
