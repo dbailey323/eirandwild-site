@@ -5,7 +5,7 @@ export default function SocialBar() {
   return (
     <div
       className="
-        fixed bottom-3 left-1/2 z-50 -translate-x-1/2
+        fixed bottom-3 left-1/2 z-30 -translate-x-1/2
         rounded-full bg-white/90 px-3 py-2 shadow-lg backdrop-blur
         ring-1 ring-black/5
         pb-[env(safe-area-inset-bottom)]
