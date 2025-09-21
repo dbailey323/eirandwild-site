@@ -5,78 +5,102 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-const NAV_LINKS = [
+const SIMPLE_LINKS = [
   { href: "/", label: "Home" },
-  { href: "/about", label: "About Me" },
-  { href: "/classes", label: "Class Info" },
-  { href: "/timetable?tab=womanhood", label: "Womanhood Classes" },
-  { href: "/timetable?tab=motherhood", label: "MotherhoodClasses" },
-  { href: "/personal-training", label: "Personal Training" },
-  { href: "/timetable", label: "Timetable & Booking" },
   { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact", kind: "button" as const },
+  { href: "/personal-training", label: "Personal training" },
+];
+
+const CLASS_LINKS = [
+  { href: "/classes/motherhood", label: "Motherhood" },
+  { href: "/classes/womanhood", label: "Womanhood" },
+  { href: "/timetable", label: "Timetable & booking" },
+  { href: "/classes", label: "Class info" },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
-  // Close on ESC
+  // Close mobile on ESC
   useEffect(() => {
-    function onKey(e: KeyboardEvent) {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
-    }
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Prevent body scroll when the drawer is open and focus the close button
+  // Lock scroll when drawer open
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-      closeBtnRef.current?.focus();
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = open ? "hidden" : "";
+    if (open) closeBtnRef.current?.focus();
   }, [open]);
 
   return (
-    <header className="border-b bg-white">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between p-4">
-        {/* Logo (left) */}
-        <Link href="/" className="flex items-center gap-2" aria-label="Eir & Wild home">
+    <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+        {/* Logo */}
+        <Link href="/" className="inline-flex items-center gap-2" aria-label="Eir & Wild home">
           <Image
-            src="/images/logo.png" // put your logo in /public/images/logo.png
+            src="/images/logo.png"     // ensure this exists in /public/images/
             alt="Eir & Wild Wellness"
-            width={170}
-            height={50}
+            width={160}
+            height={40}
             priority
+            className="h-8 w-auto"
           />
         </Link>
 
-        {/* Desktop nav (right) */}
-        <ul className="hidden items-center gap-6 text-sm md:flex">
-          {NAV_LINKS.map((link) =>
-            link.kind === "button" ? (
-              <li key={link.href}>
+        {/* Desktop nav */}
+        <ul className="hidden items-center gap-6 text-sm text-slate-800 md:flex">
+          {/* Classes dropdown */}
+          <li className="relative group">
+            <button
+              className="whitespace-nowrap transition hover:text-[--brand]"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Classes
+            </button>
+            <div
+              className="invisible absolute left-0 top-full z-40 mt-2 w-56 rounded-lg border bg-white p-2 opacity-0 shadow-lg transition
+                         group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+              role="menu"
+            >
+              {CLASS_LINKS.map((l) => (
                 <Link
-                  href={link.href}
-                  className="inline-flex items-center rounded-md border px-3 py-1.5 hover:bg-slate-50"
+                  key={l.href}
+                  href={l.href}
+                  className="block rounded-md px-3 py-2 text-sm text-slate-800 hover:bg-slate-50"
+                  role="menuitem"
                 >
-                  {link.label}
+                  {l.label}
                 </Link>
-              </li>
-            ) : (
-              <li key={link.href}>
-                <Link href={link.href} className="hover:underline">
-                  {link.label}
-                </Link>
-              </li>
-            )
-          )}
+              ))}
+            </div>
+          </li>
+
+          {SIMPLE_LINKS.map((l) => (
+            <li key={l.href}>
+              <Link href={l.href} className="whitespace-nowrap hover:text-[--brand]">
+                {l.label}
+              </Link>
+            </li>
+          ))}
         </ul>
 
-        {/* Hamburger (mobile only) */}
+        {/* Right side button (desktop) */}
+        <div className="hidden md:block">
+          <Link
+            href="/contact"
+            className="inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-800 shadow-sm transition hover:border-[--brand] hover:text-[--brand]"
+          >
+            Contact
+          </Link>
+        </div>
+
+        {/* Hamburger (mobile) */}
         <button
           className="md:hidden rounded-xl border p-2 shadow-sm"
           aria-label="Open menu"
@@ -98,7 +122,7 @@ export default function Navbar() {
         }`}
       />
 
-      {/* Drawer panel */}
+      {/* Mobile drawer */}
       <div
         role="dialog"
         aria-modal="true"
@@ -121,27 +145,42 @@ export default function Navbar() {
         </div>
 
         <div className="flex flex-col gap-1 p-2">
-          {NAV_LINKS.map((link) =>
-            link.kind === "button" ? (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="mt-2 inline-flex items-center justify-center rounded-lg bg-blue-900 bg-[--brand] px-4 py-2 font-medium text-white"
-                onClick={() => setOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ) : (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="rounded-lg px-3 py-2 text-[15px] hover:bg-slate-50"
-                onClick={() => setOpen(false)}
-              >
-                {link.label}
-              </Link>
-            )
-          )}
+          {/* Classes section */}
+          <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Classes
+          </div>
+          {CLASS_LINKS.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className="rounded-lg px-3 py-2 text-[15px] hover:bg-slate-50"
+              onClick={() => setOpen(false)}
+            >
+              {l.label}
+            </Link>
+          ))}
+
+          <div className="px-3 pb-1 pt-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Pages
+          </div>
+          {SIMPLE_LINKS.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className="rounded-lg px-3 py-2 text-[15px] hover:bg-slate-50"
+              onClick={() => setOpen(false)}
+            >
+              {l.label}
+            </Link>
+          ))}
+
+          <Link
+            href="/contact"
+            className="mx-3 mt-3 inline-flex items-center justify-center rounded-lg bg-[--brand] px-4 py-2 font-medium text-white"
+            onClick={() => setOpen(false)}
+          >
+            Contact
+          </Link>
         </div>
       </div>
     </header>
